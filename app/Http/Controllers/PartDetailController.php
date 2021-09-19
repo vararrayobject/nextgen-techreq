@@ -41,6 +41,7 @@ class PartDetailController extends Controller
 
     public function partDetailsUpdate(Request $request)
     {
+        TechRequirement::wherePartDetailId($request->part_detail_id)->delete();
         // $techReq = new TechRequirement();
         // $techReq->user_id = auth()->user()->id;
 

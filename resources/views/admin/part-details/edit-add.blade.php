@@ -348,7 +348,7 @@
                                 `][params][]" value="` + element.parameter + `" id="">
                                     </td>
                                     <td>
-                                        <input type="text" name="section[` + $.trim(section.val()) + `][specs][]" value="" id="">
+                                        <input type="text" name="section[` + $.trim(section.val()) + `][specs][]"  class="specifications" value="" id="">
                                     </td>
                                     <td>
                                         <input type="text" name="section[` + $.trim(section.val()) + `][testMethod][]" value="" id="">
@@ -370,7 +370,7 @@
                             `
                             let tdMin = `
                                 <td>
-                                    <input type="text" name="section[` + $.trim(section.val()) + `][min][]" value="" class="form-control" size="4" id="" style="padding:0.2rem !important;">
+                                    <input type="text" name="section[` + $.trim(section.val()) + `][min][]" value="" class="form-control min" size="4" id="" style="padding:0.2rem !important;">
                                 </td>
                             `
                             let tdMax = `
@@ -473,7 +473,7 @@
                                         </td>
                                         <td>
                                             <input type="text" name="section[` + element.section.id +
-                                    `][specs][]" value="` + specsVal + `" id="">
+                                    `][specs][]"  class="specifications" value="` + specsVal + `" id="">
                                         </td>
                                         <td>
                                             <input type="text" name="section[` + element.section.id +
@@ -530,7 +530,7 @@
                                 let tdMin = `
                                     <td>
                                         <input type="text" name="section[` + element.section.id + `][min][]" value="` +
-                                    minVal + `" class="form-control" size="4" id="" style="padding:0.2rem !important;">
+                                    minVal + `" class="form-control min" size="4" id="" style="padding:0.2rem !important;">
                                     </td>
                                 `
                                 let tdMax = `
@@ -558,17 +558,18 @@
         e.preventDefault();
         let sectionTable = $('#basic-data-table tbody tr')
         if (sectionTable.length > 0) {
-            let checkAllEmptySpecs = true
-            let checkAllEmptyMin = true
+            let checkAllEmptySpecs
+            let checkAllEmptyMin
             $($('#field-parameter-tables-div table')).each(function () {
                 if ($(this).data('type') === 1) {
-                    
+                    checkAllEmptySpecs = true
                     $($(this).find('.specifications')).each(function () {
                         if ($(this).val() != '') {
                             checkAllEmptySpecs = false
                         }
                     })
                 } else {
+                    checkAllEmptyMin = true
                     $($(this).find('tbody td')).find('.min').each(function () {
                         if ($(this).val() != '') {
                             checkAllEmptyMin = false
@@ -577,6 +578,7 @@
                 }
 
             })
+            console.log(checkAllEmptySpecs, checkAllEmptyMin)
             if (checkAllEmptySpecs || checkAllEmptyMin) {
                 if(checkAllEmptySpecs) alert('Fill Atleast 1 Specs')
                 if(checkAllEmptyMin) alert('Fill Atleast 1 Min')
