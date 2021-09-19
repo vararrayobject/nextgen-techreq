@@ -20,7 +20,14 @@ Route::get('/', function () {
 Auth::routes(['verify'=>true]);
 
 Route::group(['middleware' => ['auth'], 'namespace' => '\App\Http\Controllers'], function () {
+    // Part routes
     Route::get('part-details', 'PartDetailController@partDetails')->name('part-details.index');
-    Route::get('part-details/{part}', 'PartDetailController@partDetailsEdit')->name('part-details.edit');
+    Route::get('part-details/{part}/edit', 'PartDetailController@partDetailsEdit')->name('part-details.edit');
     Route::post('part-details', 'PartDetailController@partDetailsUpdate')->name('part-details.update');
+    
+    // Met Requirements routes
+    Route::get('met-requirements', 'MetRequirementController@metRequirements')->name('met-requirements.index');
+    Route::get('met-requirements/{part}/edit', 'MetRequirementController@metRequirementsEdit')->name('met-requirements.edit');
+    Route::get('met-requirements/{part}', 'MetRequirementController@metRequirementsShow')->name('met-requirements.show');
+    Route::post('met-requirements', 'MetRequirementController@metRequirementsUpdate')->name('met-requirements.update');
 });

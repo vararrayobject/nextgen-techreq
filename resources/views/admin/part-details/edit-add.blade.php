@@ -33,12 +33,12 @@
                                 <strong>Part Number:</strong>
                                 {!! Form::text('number', $part->number ?? null, array('placeholder' => 'number','class'
                                 =>
-                                'form-control')) !!}
+                                'form-control', 'readonly' => 'true')) !!}
                             </div>
                             <div class="form-group">
                                 <strong>Part Name:</strong>
                                 {!! Form::text('name', $part->name ?? null, array('placeholder' => 'name','class' =>
-                                'form-control')) !!}
+                                'form-control', 'readonly' => 'true')) !!}
                             </div>
                         </div>
                         <div class="col-xs-12 col-sm-12 col-md-12 text-center">
@@ -558,8 +558,8 @@
         e.preventDefault();
         let sectionTable = $('#basic-data-table tbody tr')
         if (sectionTable.length > 0) {
-            let checkAllEmptySpecs
-            let checkAllEmptyMin
+            let checkAllEmptySpecs = false
+            let checkAllEmptyMin = false
             $($('#field-parameter-tables-div table')).each(function () {
                 if ($(this).data('type') === 1) {
                     checkAllEmptySpecs = true
@@ -581,7 +581,7 @@
             console.log(checkAllEmptySpecs, checkAllEmptyMin)
             if (checkAllEmptySpecs || checkAllEmptyMin) {
                 if(checkAllEmptySpecs) alert('Fill Atleast 1 Specs')
-                if(checkAllEmptyMin) alert('Fill Atleast 1 Min')
+                else alert('Fill Atleast 1 Min')
             } else {
                 $('#techReq-form').submit()
             }

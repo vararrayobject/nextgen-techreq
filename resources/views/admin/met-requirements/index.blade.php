@@ -30,26 +30,36 @@
                     <table class="table table-bordered" id="basic-data-table">
                         <thead>
                             <tr>
+                                {{-- <th><input type="checkbox" name="checkbox-all" id="checkbox-all"></th> --}}
                                 <th>Sr No</th>
                                 <th>User Id</th>
                                 <th>Number</th>
                                 <th>Name</th>
-                                <th>Tech Requirements</th>
+                                <th>Met Requirements</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($partDetails as $key => $part)
+                            @foreach ($metRequirements as $key => $met)
                             <tr>
+                                {{-- <td><input type="checkbox" name="checkbox-{{ $met->id }}"
+                                        id="checkbox-{{ $met->id }}"></td> --}}
                                 <td>{{ ++$i }}</td>
-                                <td>{{ $part->user_id }}</td>
-                                <td>{{ $part->number }}</td>
-                                <td>{{ $part->name }}</td>
+                                <td>{{ $met->user_id }}</td>
+                                <td>{{ $met->number }}</td>
+                                <td>{{ $met->name }}</td>
                                 <td>
                                     <span>
-                                        <a type="button" href="{{ route('part-details.edit', $part->id) }}"
-                                            class="btn btn-primary"><span class="mdi mdi-pen"></span>
+                                        <a type="button" href="{{ route('met-requirements.edit', $met->id) }}"
+                                            class="btn btn-warning"><span class="mdi mdi-pen"></span>
                                         </a>
                                     </span>
+                                    @if ($met->metReqs)
+                                    <span>
+                                        <a type="button" href="{{ route('met-requirements.show', $met->id) }}"
+                                            class="btn btn-success"><span class="mdi mdi-eye"></span>
+                                        </a>
+                                    </span>
+                                    @endif
                                 </td>
                             </tr>
                             @endforeach
@@ -57,7 +67,7 @@
                     </table>
                 </div>
                 {{-- <div class="mx-auto">
-                    {{ $partDetails->links("pagination::bootstrap-4") }}
+                    {{ $metRequirements->links("pagination::bootstrap-4") }}
                 </div> --}}
             </div>
         </div>

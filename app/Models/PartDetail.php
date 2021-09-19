@@ -20,4 +20,9 @@ class PartDetail extends Model
     {
         return $this->hasMany('App\Models\TechRequirement');
     }
+
+    public function metReqs()
+    {
+        return $this->hasOne('App\Models\MetRequirement');
+    }
 }

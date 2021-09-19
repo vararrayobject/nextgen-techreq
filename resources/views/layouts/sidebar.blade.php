@@ -30,6 +30,12 @@
                     </a>
                 </li>
                 <li class="">
+                    <a class="sidenav-item-link" href="{{route('met-requirements.index')}}">
+                        <i class="mdi mdi-city-variant-outline"></i>
+                        <span class="nav-text">Met Req</span>
+                    </a>
+                </li>
+                <li class="">
                     <form action="{{route('logout')}}" id="logout-sidebar" method="post">
                         @csrf
                     </form>
