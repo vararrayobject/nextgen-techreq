@@ -43,7 +43,7 @@
                             <a class="btn btn-primary" href="{{ route('met-requirements.index') }}"> Back</a>
                             {{-- <button type="submit" class="btn btn-success">{{ isset($part) ? 'Update' : 'Submit' }}</button>
                             --}}
-                            <button type="button" id="tech-req" class="btn btn-success">Tech Requirement</button>
+                            <button type="button" id="tech-req" class="btn btn-success">Met Requirement</button>
                         </div>
                     </div>
                     <p class="text-center text-primary"><small></small></p>
@@ -56,7 +56,7 @@
                     <div class="row">
                         <div class="col-lg-12 margin-tb">
                             <div class="pull-left">
-                                <h2>Tech Req</h2>
+                                <h2>Met Requirement</h2>
                             </div>
                         </div>
                     </div>

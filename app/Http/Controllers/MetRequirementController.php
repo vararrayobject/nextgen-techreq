@@ -85,11 +85,10 @@ class MetRequirementController extends Controller
 
     public function metRequirementsShow($part_detail_id)
     {
-        $part = PartDetail::whereId($part_detail_id)
-        ->with(['techReqs' => function ($techReqs) {
-            $techReqs->with(['section']);
-        }])->first();
+        $metDetails = MetRequirement::whereId($part_detail_id)
+        ->with(['partDetail'])
+        ->first();
 
-        return view('admin.met-requirements.edit-add', compact('part'));
+        return view('admin.met-requirements.show', compact('metDetails'));
     }
 }

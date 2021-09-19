@@ -15,4 +15,9 @@ use Illuminate\Database\Eloquent\Model;
 class MetRequirement extends Model
 {
     use HasFactory;
+
+    public function partDetail()
+    {
+        return $this->belongsTo('App\Models\PartDetail');
+    }
 }
