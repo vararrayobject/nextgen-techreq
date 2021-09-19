@@ -77,16 +77,18 @@
                         <div class="col-xs-9 col-sm-9 col-md-9">
                             <select id="import-part-dropdown" class="form-control">
                                 @foreach ($techReqs as $partNumbers)
-                                    <option value="{{ $partNumbers->id }}">{{ $partNumbers->number . '(' . $partNumbers->name . ')' }}</option>
+                                <option value="{{ $partNumbers->id }}">
+                                    {{ $partNumbers->number . '(' . $partNumbers->name . ')' }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-xs-3 col-sm-3 col-md-3">
-                            <input type="button" class="form-control btn btn-primary" id="import-section" value="Import">
+                            <input type="button" class="form-control btn btn-primary" id="import-section"
+                                value="Import">
                         </div>
                     </div>
 
-                    {!! Form::model(null, ['method' => 'POST','route' =>  ['part-details.update', $part]]) !!}
+                    {!! Form::model(null, ['method' => 'POST', 'id' => 'techReq-form','route' => ['part-details.update', $part]]) !!}
                     <input type="hidden" name="part_detail_id" value="{{ $part->id }}">
                     <div class="row">
                         <div class="col-xs-9 col-sm-9 col-md-9">
@@ -119,8 +121,10 @@
                                     <td>{{ $techReqs->sequence }}</td>
                                     <td>
                                         <span>
-                                            <button type="button" class="btn btn-danger remove-section" value="Delete" data-id="{{ $techReqs->section_id }}" data-sequence="` + sequence + `" data-type="` + section.data('type') +
-                                `" id='remove-section{{ $techReqs->section_id }}'>
+                                            <button type="button" class="btn btn-danger remove-section" value="Delete"
+                                                data-id="{{ $techReqs->section_id }}" data-sequence="` + sequence + `"
+                                                data-type="{{ $techReqs->section->type }}"
+                                                id='remove-section{{ $techReqs->section_id }}'>
                                                 <span class="mdi mdi-delete"></span>
                                             </button>
                                         </span>
@@ -132,7 +136,97 @@
                         </table>
                     </div>
 
-                    <div class="card" id="field-parameter-tables-div" style="display: block;"></div>
+                    <div class="card" id="field-parameter-tables-div" style="display: block;">
+                        @if (count($part->techReqs))
+                        @foreach ($part->techReqs as $techReqs)
+                        <div id="section-fields-table-{{ $techReqs->section_id }}" style="display: block;">
+                            <input type="hidden" value="{{ $techReqs->section_id }}"
+                                name="section[{{ $techReqs->section_id }}][section_id][]">
+                            <input type="hidden" value="{{ $techReqs->section->type }}"
+                                name="section[{{ $techReqs->section_id }}][section_type][]">
+                            <input type="hidden" value="{{ $techReqs->sequence }}"
+                                name="section[{{ $techReqs->section_id }}][sequence][]"
+                                id="sectionSequence{{ $techReqs->section_id }}">
+                            <input type="text" value="{{ $techReqs->section_name }}"
+                                name="section[{{ $techReqs->section_id }}][section_name][]">
+                            <table class="table table-bordered" data-type="{{ $techReqs->section->type }}">
+                                @if ($techReqs->section->type === 1)
+                                <thead>
+                                    <tr>
+                                        <th>Parameters</th>
+                                        <th>Specification*</th>
+                                        <th>Test method</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (json_decode($techReqs->parameters, true) as $key => $value)
+                                    @foreach ($value as $k => $v)
+                                    <tr>
+                                        <td>
+                                            <input type="text" name="section[{{ $techReqs->section->type }}][params][]"
+                                                value="{{ $k }}" id="">
+                                        </td>
+                                        <td>
+                                            <input type="text" name="section[{{ $techReqs->section->type }}][specs][]"
+                                                value="{{ $v['specs'] }}" class="specifications" id="">
+                                        </td>
+                                        <td>
+                                            <input type="text"
+                                                name="section[{{ $techReqs->section->type }}][testMethod][]"
+                                                value="{{ $v['test_method'] }}" id="">
+                                        </td>
+                                    </tr>
+                                    @endforeach
+                                    @endforeach
+                                </tbody>
+
+                                @else
+                                <tbody>
+                                    <tr id="elementsRow">
+                                        <th>Elements</th>
+                                        @foreach (json_decode($techReqs->parameters, true) as $key => $value)
+                                        @foreach ($value as $k => $v)
+                                        <td>
+                                            <input type="text"
+                                                name="section[{{ $techReqs->section->type }}][elements][]"
+                                                value="{{ $k }}" class="form-control" size="2" id=""
+                                                style="padding:0.2rem !important;">
+                                        </td>
+                                        @endforeach
+                                        @endforeach
+                                    </tr>
+                                    <tr id="minRow">
+                                        <th>Min*</th>
+                                        @foreach (json_decode($techReqs->parameters, true) as $key => $value)
+                                        @foreach ($value as $k => $v)
+                                        <td>
+                                            <input type="text" name="section[{{ $techReqs->section->type }}][min][]"
+                                                value="{{ $v['min'] }}" class="form-control min" size="4" id=""
+                                                style="padding:0.2rem !important;">
+                                        </td>
+                                        @endforeach
+                                        @endforeach
+                                    </tr>
+                                    <tr id="maxRow">
+                                        <th>Max*</th>
+                                        @foreach (json_decode($techReqs->parameters, true) as $key => $value)
+                                        @foreach ($value as $k => $v)
+                                        <td>
+                                            <input type="text" name="section[{{ $techReqs->section->type }}][max][]"
+                                                value="{{ $v['max'] }}" class="form-control max" size="4" id=""
+                                                style="padding:0.2rem !important;">
+                                        </td>
+                                        @endforeach
+                                        @endforeach
+                                    </tr>
+                                </tbody>
+                                @endif
+                            </table>
+                        </div>
+                        @endforeach
+                        @endif
+
+                    </div>
 
                     <div class="col-xs-12 col-sm-12 col-md-12 text-center">
                         <button type="submit" class="btn btn-success" id="update-tech-req">Update</button>
@@ -148,8 +242,8 @@
 
 @section('scripts')
 <script>
-
-    let sequence = 1
+    let sequence = $('#basic-data-table tbody tr').length > 0 ? $('#basic-data-table tbody tr').length + 1 : 1  
+    // if ('#basic-data-table tr').length()
 
     $('#tech-req').on('click', function () {
         $('#tech-req-div').toggle()
@@ -166,14 +260,18 @@
         else {
             let $type1Table
             if ($.trim(section.data('type')) === 1) {
-                $type1Table = 
-                `
+                $type1Table =
+                    `
                     <div id="section-fields-table-` + section.val() + `" style="display: block;">
-                        <input type="hidden" value="` + $.trim(section.val()) + `" name="section[` + $.trim(section.val()) + `][section_id][]">
-                        <input type="hidden" value="` + $.trim(section.data('type')) + `" name="section[` + $.trim(section.val()) + `][section_type][]">
-                        <input type="hidden" value="` + sequence + `" name="section[` + $.trim(section.val()) + `][sequence][]" id="sectionSequence` + $.trim(section.val()) + `">
-                        <input type="text" value="` + $.trim(section.text()) + `" name="section[` + $.trim(section.val()) + `][section_name][]">
-                        <table class="table table-bordered">
+                        <input type="hidden" value="` + $.trim(section.val()) + `" name="section[` + $.trim(section
+                        .val()) + `][section_id][]">
+                        <input type="hidden" value="` + $.trim(section.data('type')) + `" name="section[` + $.trim(
+                        section.val()) + `][section_type][]">
+                        <input type="hidden" value="` + sequence + `" name="section[` + $.trim(section.val()) +
+                    `][sequence][]" id="sectionSequence` + $.trim(section.val()) + `">
+                        <input type="text" value="` + $.trim(section.text()) + `" name="section[` + $.trim(section
+                    .val()) + `][section_name][]">
+                        <table class="table table-bordered" data-type="` + $.trim(section.data('type')) + `">
                             <thead>
                                 <tr>
                                     <th>Parameters</th>
@@ -188,14 +286,18 @@
                     </div>
                 `
             } else {
-                $type1Table = 
-                `
+                $type1Table =
+                    `
                     <div id="section-fields-table-` + section.val() + `" style="display: block;">
-                        <input type="hidden" value="` + $.trim(section.val()) + `" name="section[` + $.trim(section.val()) + `][section_id][]">
-                        <input type="hidden" value="` + $.trim(section.data('type')) + `" name="section[` + $.trim(section.val()) + `][section_type][]">
-                        <input type="hidden" value="` + sequence + `" name="section[` + $.trim(section.val()) + `][sequence][]" id="sectionSequence` + $.trim(section.val()) + `">
-                        <input type="text" value="` + $.trim(section.text()) + `" name="section[` + $.trim(section.val()) + `][section_name][]">
-                        <table class="table table-bordered table-responsive">
+                        <input type="hidden" value="` + $.trim(section.val()) + `" name="section[` + $.trim(section
+                        .val()) + `][section_id][]">
+                        <input type="hidden" value="` + $.trim(section.data('type')) + `" name="section[` + $.trim(
+                        section.val()) + `][section_type][]">
+                        <input type="hidden" value="` + sequence + `" name="section[` + $.trim(section.val()) +
+                    `][sequence][]" id="sectionSequence` + $.trim(section.val()) + `">
+                        <input type="text" value="` + $.trim(section.text()) + `" name="section[` + $.trim(section
+                    .val()) + `][section_name][]">
+                        <table class="table table-bordered table-responsive"  data-type="` + $.trim(section.data('type')) + `">
                             <tbody>
                                 <tr id="elementsRow">
                                     <th>Elements</th>
@@ -242,7 +344,8 @@
                             let trParam1 = `
                                 <tr>
                                     <td>
-                                        <input type="text" name="section[` + $.trim(section.val()) + `][params][]" value="` + element.parameter + `" id="">
+                                        <input type="text" name="section[` + $.trim(section.val()) +
+                                `][params][]" value="` + element.parameter + `" id="">
                                     </td>
                                     <td>
                                         <input type="text" name="section[` + $.trim(section.val()) + `][specs][]" value="" id="">
@@ -253,14 +356,16 @@
                                 </tr>
                             `
 
-                            $('#section-fields-table-' + section.val() + ' tbody').append(trParam1)
+                            $('#section-fields-table-' + section.val() + ' tbody').append(
+                                trParam1)
                         });
                     } else {
                         $('#section-fields-table-' + section.val() + ' tbody tr th td').empty()
                         res.forEach(element => {
                             let tdElement = `
                                 <td>
-                                    <input type="text" name="section[` + $.trim(section.val()) + `][elements][]" value="` + element.parameter + `" class="form-control" size="2" id="" style="padding:0.2rem !important;">
+                                    <input type="text" name="section[` + $.trim(section.val()) +
+                                `][elements][]" value="` + element.parameter + `" class="form-control" size="2" id="" style="padding:0.2rem !important;">
                                 </td>
                             `
                             let tdMin = `
@@ -310,11 +415,13 @@
                     let td = `
                         <tr id="section-row-` + element.section.id + `" data-id="` + element.section.id + `">
                             <td>` + element.section.name + `</td>
-                            <td>` + element.sequence + `</td>
+                            <td>` + element.sequence +
+                        `</td>
                             <td>
                                 <span>
                                     <button type="button" class="btn btn-danger remove-section" value="Delete" data-id="` +
-                        element.section.id + `" data-sequence="` + element.sequence + `" data-type="` + element.section.type +
+                        element.section.id + `" data-sequence="` + element.sequence +
+                        `" data-type="` + element.section.type +
                         `" id='remove-section` + element.section.id + `'>
                                         <span class="mdi mdi-delete"></span>
                                     </button>
@@ -324,13 +431,18 @@
                     `
                     $('#basic-data-table tbody').append(td)
                     if (element.section.type === 1) {
-                        $type1Table = 
-                        `
+                        $type1Table =
+                            `
                             <div id="section-fields-table-` + element.section.id + `" style="display: block;">
-                                <input type="hidden" value="` + $.trim(element.section.id) + `" name="section[` + $.trim(element.section.id) + `][section_id][]">
-                                <input type="hidden" value="` + $.trim(element.section.type) + `" name="section[` + $.trim(element.section.id) + `][section_type][]">
-                                <input type="hidden" value="` + element.sequence + `" name="section[` + $.trim(element.section.id) + `][sequence][]" id="sectionSequence` + $.trim(element.sequence) + `">
-                                <input type="text" value="` + $.trim(element.section_name) + `" name="section[` + $.trim(element.section.id) + `][section_name][]">
+                                <input type="hidden" value="` + $.trim(element.section.id) + `" name="section[` + $
+                            .trim(element.section.id) + `][section_id][]">
+                                <input type="hidden" value="` + $.trim(element.section.type) + `" name="section[` + $
+                            .trim(element.section.id) + `][section_type][]">
+                                <input type="hidden" value="` + element.sequence + `" name="section[` + $.trim(element
+                                .section.id) + `][sequence][]" id="sectionSequence` + $.trim(element
+                                .sequence) + `">
+                                <input type="text" value="` + $.trim(element.section_name) + `" name="section[` + $
+                            .trim(element.section.id) + `][section_name][]">
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -348,7 +460,7 @@
                         $('#field-parameter-tables-div').append($type1Table)
 
                         let parametersType1 = JSON.parse(element.parameters)
-                        $('#section-fields-table-'+ element.section.id +' tbody').empty()
+                        $('#section-fields-table-' + element.section.id + ' tbody').empty()
                         parametersType1.forEach(fields => {
                             $.map(fields, function (val, key) {
                                 let specsVal = val.specs ?? ""
@@ -356,27 +468,36 @@
                                 let trParam1Import = `
                                     <tr>
                                         <td>
-                                            <input type="text" name="section[` + element.section.id + `][params][]" value="` + key + `" id="">
+                                            <input type="text" name="section[` + element.section.id +
+                                    `][params][]" value="` + key + `" id="">
                                         </td>
                                         <td>
-                                            <input type="text" name="section[` + element.section.id + `][specs][]" value="` + specsVal + `" id="">
+                                            <input type="text" name="section[` + element.section.id +
+                                    `][specs][]" value="` + specsVal + `" id="">
                                         </td>
                                         <td>
-                                            <input type="text" name="section[` + element.section.id + `][testMethod][]" value="` + testMethodVal + `" id="">
+                                            <input type="text" name="section[` + element.section.id +
+                                    `][testMethod][]" value="` + testMethodVal + `" id="">
                                         </td>
                                     </tr>
                                 `
-                                $('#section-fields-table-'+ element.section.id +' tbody').append(trParam1Import)
+                                $('#section-fields-table-' + element.section.id +
+                                    ' tbody').append(trParam1Import)
                             })
                         });
                     } else {
-                        $type1Table = 
-                        `
+                        $type1Table =
+                            `
                             <div id="section-fields-table-` + element.section.id + `" style="display: block;">
-                                <input type="hidden" value="` + $.trim(element.section.id) + `" name="section[` + $.trim(element.section.id) + `][section_id][]">
-                                <input type="hidden" value="` + $.trim(element.section.type) + `" name="section[` + $.trim(element.section.id) + `][section_type][]">
-                                <input type="hidden" value="` + element.sequence + `" name="section[` + $.trim(element.section.id) + `][sequence][]" id="sectionSequence` + $.trim(element.sequence) + `">
-                                <input type="text" value="` + $.trim(element.section_name) + `" name="section[` + $.trim(element.section.id) + `][section_name][]">
+                                <input type="hidden" value="` + $.trim(element.section.id) + `" name="section[` + $
+                            .trim(element.section.id) + `][section_id][]">
+                                <input type="hidden" value="` + $.trim(element.section.type) + `" name="section[` + $
+                            .trim(element.section.id) + `][section_type][]">
+                                <input type="hidden" value="` + element.sequence + `" name="section[` + $.trim(element
+                                .section.id) + `][sequence][]" id="sectionSequence` + $.trim(element
+                                .sequence) + `">
+                                <input type="text" value="` + $.trim(element.section_name) + `" name="section[` + $
+                            .trim(element.section.id) + `][section_name][]">
                                 <table class="table table-bordered table-responsive">
                                     <tbody>
                                         <tr id="elementsRow">
@@ -399,20 +520,23 @@
                             $.map(fields, function (val, key) {
                                 let minVal = val.min ?? ""
                                 let maxVal = val.max ?? ""
-                                
+
                                 let tdElement = `
                                     <td>
-                                        <input type="text" name="section[` + element.section.id + `][elements][]" value="` + key + `" class="form-control" size="2" id="" style="padding:0.2rem !important;">
+                                        <input type="text" name="section[` + element.section.id +
+                                    `][elements][]" value="` + key + `" class="form-control" size="2" id="" style="padding:0.2rem !important;">
                                     </td>
                                 `
                                 let tdMin = `
                                     <td>
-                                        <input type="text" name="section[` + element.section.id + `][min][]" value="` + minVal + `" class="form-control" size="4" id="" style="padding:0.2rem !important;">
+                                        <input type="text" name="section[` + element.section.id + `][min][]" value="` +
+                                    minVal + `" class="form-control" size="4" id="" style="padding:0.2rem !important;">
                                     </td>
                                 `
                                 let tdMax = `
                                     <td>
-                                        <input type="text" name="section[` + element.section.id + `][max][]" value="` + maxVal + `" class="form-control" size="4" id="" style="padding:0.2rem !important;">
+                                        <input type="text" name="section[` + element.section.id + `][max][]" value="` +
+                                    maxVal + `" class="form-control" size="4" id="" style="padding:0.2rem !important;">
                                     </td>
                                 `
 
@@ -427,7 +551,40 @@
         });
     }
     $('#import-section').on('click', function () {
-        importData()        
+        importData()
+    })
+
+    $('#update-tech-req').on('click', function (e) {
+        e.preventDefault();
+        let sectionTable = $('#basic-data-table tbody tr')
+        if (sectionTable.length > 0) {
+            let checkAllEmptySpecs = true
+            let checkAllEmptyMin = true
+            $($('#field-parameter-tables-div table')).each(function () {
+                if ($(this).data('type') === 1) {
+                    
+                    $($(this).find('.specifications')).each(function () {
+                        if ($(this).val() != '') {
+                            checkAllEmptySpecs = false
+                        }
+                    })
+                } else {
+                    $($(this).find('tbody td')).find('.min').each(function () {
+                        if ($(this).val() != '') {
+                            checkAllEmptyMin = false
+                        }
+                    })
+                }
+
+            })
+            if (checkAllEmptySpecs || checkAllEmptyMin) {
+                if(checkAllEmptySpecs) alert('Fill Atleast 1 Specs')
+                if(checkAllEmptyMin) alert('Fill Atleast 1 Min')
+            } else {
+                $('#techReq-form').submit()
+            }
+        }
+        else alert('Select at least 1 section')
     })
 </script>
 @endsection

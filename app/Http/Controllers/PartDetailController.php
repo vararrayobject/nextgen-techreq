@@ -24,7 +24,11 @@ class PartDetailController extends Controller
 
     public function partDetailsEdit($id)
     {
-        $part = PartDetail::whereId($id)->with(['techReqs'])->first();
+        $part = PartDetail::whereId($id)
+        ->with(['techReqs' => function ($techReqs) {
+            $techReqs->with(['section']);
+        }])->first();
+
         $techReqs = PartDetail::whereHas('techReqs')
         ->with(['techReqs'])
         // ->with(['techReqs' => function ($techReqs) {
