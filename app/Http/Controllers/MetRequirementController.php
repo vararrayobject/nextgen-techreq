@@ -1,4 +1,13 @@
 <?php
+/**
+ * ==================================================================================================
+ * @author Yogesh Gholap
+ * @email yagholap@gmail.com
+ * @create date 2021-09-19
+ * @modify date 2021-09-19
+ * @desc [description]
+ * ==================================================================================================
+ */
 
 namespace App\Http\Controllers;
 
@@ -57,11 +66,20 @@ class MetRequirementController extends Controller
                 array_push($tempArr, $sectionNameArr);
             }
         }
-        $techReq = new MetRequirement();
-        $techReq->user_id = auth()->user()->id;
-        $techReq->part_detail_id = $request->part_detail_id;
-        $techReq->final_values = json_encode($tempArr);
-        $techReq->save();
+        $metReq = MetRequirement::wherePartDetailId($request->part_detail_id)->first();
+        if ($metReq) {
+            $metReq->final_values = json_encode($tempArr);
+        } else {
+            $metReq = new MetRequirement();
+            $metReq->user_id = auth()->user()->id;
+            $metReq->part_detail_id = $request->part_detail_id;
+        }
+
+        try {
+            $metReq->save();
+        } catch (\Throwable $th) {
+            //log the error
+        }
         return redirect()->route('met-requirements.index');
     }
 

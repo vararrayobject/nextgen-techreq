@@ -31,32 +31,17 @@ class PartDetailController extends Controller
 
         $techReqs = PartDetail::whereHas('techReqs')
         ->with(['techReqs'])
-        // ->with(['techReqs' => function ($techReqs) {
-        //     $techReqs->with(['section']);
-        // }])
         ->get();
-        // dd($techReqs->toArray());
         return view('admin.part-details.edit-add', compact('part', 'techReqs'));
     }
 
     public function partDetailsUpdate(Request $request)
     {
         TechRequirement::wherePartDetailId($request->part_detail_id)->delete();
-        // $techReq = new TechRequirement();
-        // $techReq->user_id = auth()->user()->id;
-
-        // dd('updarte', $request->all());
         foreach ($request->section as $key => $section) {
             $parameters = [];
-            // dd($section['section_type'][0]);
-            // dd($section);
             if ($section['section_type'][0] === '1') {
-                // $techReq->section_id = $section['section_id'][0];
-                // $techReq->section_name = $section['section_name'][0];
-                // $techReq->sequence = $section['sequence'][0];
-                // $techReq->section_id = $value['section_id'][0];
                 foreach ($section['specs'] as $key => $value) {
-                    // dd($section['min'][$key], $value);
                     $tempArr = [];
                     $tempArr[$section['params'][$key]] = [
                         'specs' => $value,
@@ -72,7 +57,6 @@ class PartDetailController extends Controller
                 $techReq->sequence = $section['sequence'][0];
                 $techReq->parameters = json_encode($parameters);
                 $techReq->save();
-                // dd($parameters,$value);
             } else {
                 foreach ($section['min'] as $key => $value) {
                     $tempArr = [];
@@ -92,9 +76,6 @@ class PartDetailController extends Controller
                 $techReq->save();
             }
         }
-        // dd('updarte', $request->all());
-
-        // $part = PartDetail::whereId($id)->first();
         return redirect()->route('part-details.index');
     }
 
